@@ -133,6 +133,10 @@ end
 function reset()
 	n_steps = 0
 	robot.leds.set_all_colors("black")
+	robot.leds.set_single_color(1, "blue")
+	robot.leds.set_single_color(12, "blue")
+	robot.leds.set_single_color(6, "red")
+	robot.leds.set_single_color(7, "red")
 end
 
 
