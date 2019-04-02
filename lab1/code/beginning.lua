@@ -4,7 +4,6 @@ MOVE_STEPS = 15
 n_steps = 0
 
 states = {FOTOTASSI=0, FOLLOWBORDER=1};
-
 state = states.FOTOTASSI;
 
 --[[ This function is executed every time you press the 'execute'
@@ -17,12 +16,15 @@ function init()
 	robot.leds.set_all_colors("black")
 end
 
+
 function fototassi()
-	---
+	-- change state
+	
 end
 
+
 function followborder()
-	---
+	-- change state
 end
 
 
