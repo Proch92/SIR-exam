@@ -31,6 +31,10 @@ local function neg(vec)
     return {x = -vec.x, y = -vec.y}
 end
 
+local function mul_scalar(vec, scalar)
+    return {x = vec.x * scalar, y = vec.y * scalar}
+end
+
 local function norm(vec)
     magnitude = module.getMag(vec)
     if magnitude == 0 then
@@ -49,5 +53,6 @@ module.add = add
 module.setMag = setMag
 module.getMag = getMag
 module.neg = neg
+module.mul_scalar = mul_scalar
 module.norm = norm
 return setmetatable(module, {__call = function(_,...) return new(...) end})
