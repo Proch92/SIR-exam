@@ -10,6 +10,13 @@ local function fromAngle(angle)
     return {x = math.cos(angle), y = -math.sin(angle)}
 end
 
+local function newPolar(angle, magnitude)
+    local newvec = module.fromAngle(angle)
+    newvec = module.setMag(newvec, magnitude)
+
+    return newvec
+end
+
 local function getAngle(vec)
     return -math.atan2(vec.y, vec.x)
 end
@@ -55,4 +62,5 @@ module.getMag = getMag
 module.neg = neg
 module.mul_scalar = mul_scalar
 module.norm = norm
+module.newPolar = newPolar
 return setmetatable(module, {__call = function(_,...) return new(...) end})

@@ -29,7 +29,9 @@ function step()
 	components = {light_component, proximity_component, forward_component}
 	sum = func.foldr(function(v1, v2) return vector.add(v1, v2) end, vector.new(0,0), components)
 
-	sum = vector.setMag(sum, tanh(vector.getMag(sum)) * MAX_POWER)
+	if vector.getMag(sum) < MAX_POWER then
+		sum = vector.setMag(sum, MAX_POWER)
+	end
 
 	log('total: ', vector.getMag(sum))
 
@@ -57,16 +59,15 @@ function proximity2force(inputs)
 	angle = vector.getAngle(resultant)
 	mag = vector.getMag(resultant)
 
-	rot = 2 + relu(tanh(mag) - 0.8)
-
 	if math.sin(angle) > 0 then
-		angle = angle - (math.pi / rot)
+		angle = angle - (math.pi / 2.2)
 	else
-		angle = angle + (math.pi / rot)
+		angle = angle + (math.pi / 2.2)
 	end
 
-	tangent = vector.newPolar(angle, tanh(mag) * 2)
-
+	tangent = vector.fromAngle(angle)
+	tangent = vector.setMag(tangent, tanh(mag) * 2)
+	
 	log('proximity: ', vector.getMag(tangent))
 
 	return tangent;
@@ -81,8 +82,8 @@ function randomdir(light, proximity)
 
 	light_mag = vector.getMag(light)
 	proximity_mag = vector.getMag(proximity)
-
-	resultant = vector.newPolar(rand_angle, relu(1 - math.max(light_mag, proximity_mag)))
+	resultant = vector.fromAngle(rand_angle)
+	resultant = vector.setMag(resultant, relu(1 - math.max(light_mag, proximity_mag)))
 
 	log('random: ', vector.getMag(resultant))
 
@@ -92,8 +93,8 @@ end
 function forward(light, proximity)
 	light_mag = vector.getMag(light)
 	proximity_mag = vector.getMag(proximity)
-
-	resultant = vector.newPolar(0, relu(1 - math.max(light_mag, proximity_mag)))
+	resultant = vector.fromAngle(0)
+	resultant = vector.setMag(resultant, relu(1 - math.max(light_mag, proximity_mag)))
 
 	log('forward: ', vector.getMag(resultant))
 
@@ -163,12 +164,14 @@ end
 function input(tbl)
 	light_vectors = {}
 	for i=1,24 do
-		light_vectors[i] = vector.newPolar(tbl.light[i].angle, tbl.light[i].value)
+		light_vectors[i] = vector.fromAngle(tbl.light[i].angle)
+		light_vectors[i] = vector.setMag(light_vectors[i], tbl.light[i].value)
 	end
 
 	proximity_vectors = {}
 	for i=1,24 do
-		proximity_vectors[i] = vector.newPolar(tbl.proximity[i].angle, tbl.proximity[i].value)
+		proximity_vectors[i] = vector.fromAngle(tbl.proximity[i].angle)
+		proximity_vectors[i] = vector.setMag(proximity_vectors[i], tbl.proximity[i].value)
 	end
 
 	return {
