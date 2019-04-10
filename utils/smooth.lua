@@ -5,28 +5,35 @@ local module = {}
 window_size = 3
 mod_idx = 0
 window = {}
+index = {}
 
-local function next()
-    window[mod_idx] = table.copy(robot)
-    log('svdfvfv')
-    mod_idx = (mod_idx + 1) % window_size
+local function next(key, tbl)
+    -- add table to window
+    if index[key] == nil then
+        index[key] = 0
+    end
+    log(index[key])
+    index[key] = (index[key] + 1) % window_size
+    window[key][index[key]] = copy_table(tbl)
+
+    -- sum
     smoothed = {}
     non_nil = 0
     for w=0,(window_size-1) do
         if window[w] ~= nil then
             for i=1,24 do
-                smoothed.light[i] = smoothed.light[i] + window[w].light[i]
-            end
-            for i=1,24 do
-                smoothed.proximity[i] = smoothed.proximity[i] + window[w].proximity[i]
+                if smoothed[i] == nil then
+                    smoothed[i] = 0
+                end
+                smoothed[i] = smoothed[i] + window[key][w][i]
             end
             non_nil = non_nil + 1
         end
     end
 
+    -- average
     for i=1,24 do
-        smoothed.light[i] = smoothed.light[i] / non_nil
-        smoothed.proximity[i] = smoothed.proximity[i] / non_nil
+        smoothed[i] = smoothed[i] / non_nil
     end
 
     return smoothed
@@ -34,6 +41,16 @@ end
 
 local function init(ws)
     window_size = ws
+end
+
+local function copy_table(tbl)
+    local newtable = {}
+
+    for k,v in pairs(tbl) do
+        newtable[k] = v
+    end
+
+    return newtable
 end
 
 -------------------------------------------------------------

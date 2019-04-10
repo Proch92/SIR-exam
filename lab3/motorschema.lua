@@ -57,7 +57,7 @@ function proximity2force(inputs)
 	angle = vector.getAngle(resultant)
 	mag = vector.getMag(resultant)
 
-	rot = 2 + relu(tanh(mag) - 0.8)
+	rot = 2 + relu(tanh(mag) - 0.85) * 2
 
 	if math.sin(angle) > 0 then
 		angle = angle - (math.pi / rot)
@@ -129,38 +129,10 @@ function dir2powers(vec)
 	--return {left = left, right = right}
 end
 
-window_size = 3
-mod_idx = 0
-window = {}
-
-function smooth()
-	log('gf')
-    window[mod_idx] = table.copy(robot)
-    log('asd')
-    mod_idx = (mod_idx + 1) % window_size
-    smoothed = {}
-    non_nil = 0
-    for w=0,(window_size-1) do
-        if window[w] ~= nil then
-            for i=1,24 do
-                smoothed.light[i] = smoothed.light[i] + window[w].light[i]
-            end
-            for i=1,24 do
-                smoothed.proximity[i] = smoothed.proximity[i] + window[w].proximity[i]
-            end
-            non_nil = non_nil + 1
-        end
-    end
-
-    for i=1,24 do
-        smoothed.light[i] = smoothed.light[i] / non_nil
-        smoothed.proximity[i] = smoothed.proximity[i] / non_nil
-    end
-
-    return smoothed
-end
-
 function input(tbl)
+	--light_smooth = smooth.next('light', tbl.light)
+	--proximity_smooth = smooth.next('proximity', tbl.proximity)
+
 	light_vectors = {}
 	for i=1,24 do
 		light_vectors[i] = vector.newPolar(tbl.light[i].angle, tbl.light[i].value)
