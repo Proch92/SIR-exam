@@ -36,6 +36,18 @@ class Network:
         self.network_state = activations
         return [activations[out] for out in self.out_nodes]
 
+    def swap_nodes(self, nodes):
+        gate = nodes[0].gate
+        nodes[0].gate = nodes[1].gate
+        nodes[1].gate = gate
+
+    def get_genome(self):
+        return [node.gate for node in self.nodes]
+
+    def set_genome(self, genome):
+        for i, gate in enumerate(genome):
+            self.nodes[i].gate = gate
+
     def random_init(self, n_inputs, n_outputs, graph_size=10):
         self.graph_size = graph_size
         self.network_state = random.choices([False, True], k=self.graph_size)
