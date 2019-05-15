@@ -3,13 +3,11 @@ import dill
 from gates import gates
 
 
-class Node():
-    gate = None
-    parents = []
-
-    def __init__(self, gate, parents=[]):
-        self.gate = gate
-        self.parents = parents
+class Node:
+    def __init__(self, _gate):
+        self.gate = _gate
+        self.parents = []
+        self.parent_n = 0
 
     def add_parent(self, parent):
         self.parents.append(parent)
@@ -19,38 +17,39 @@ class Node():
 
 
 class Network:
-    nodes = []
-    input_nodes = []
-    out_nodes = []
-    network_state = []
-    graph_size = 0
-
     def __init__(self):
-        pass
+        self.nodes = []
+        self.input_nodes = []
+        self.out_nodes = []
+        self.network_state = []
+        self.activations = []
+        self.graph_size = 0
 
     def step(self, inputs):
-        assert (len(inputs) == len(self.input_nodes)), "number of inputs is different from expected number"
-        self.network_state.extend(inputs)
+        # assert (len(inputs) == len(self.input_nodes)), "number of inputs is different from expected number"
+        self.swap_states_reference()
 
-        activations = [node.activate(self.network_state) for node in self.nodes]
-        self.network_state = activations
-        return [activations[out] for out in self.out_nodes]
+        for i, inp in enumerate(inputs):
+            self.network_state[self.graph_size + i] = inp
+
+        for i in range(self.graph_size):
+            self.activations[i] = self.nodes[i].activate(self.network_state)
+
+        return [self.activations[out] for out in self.out_nodes]
 
     def swap_nodes(self, nodes):
         gate = nodes[0].gate
         nodes[0].gate = nodes[1].gate
         nodes[1].gate = gate
 
-    def get_genome(self):
-        return [node.gate for node in self.nodes]
-
-    def set_genome(self, genome):
-        for i, gate in enumerate(genome):
-            self.nodes[i].gate = gate
+    @staticmethod
+    def gen_random_chromosome(self):
+        random.choices([False, True], k=self.graph_size)
 
     def random_init(self, n_inputs, n_outputs, graph_size=10):
         self.graph_size = graph_size
-        self.network_state = random.choices([False, True], k=self.graph_size)
+        self.network_state = random.choices([False, True], k=(self.graph_size + n_inputs))
+        self.activations = random.choices([False, True], k=(self.graph_size + n_inputs))
         connected = []
 
         self.nodes.append(Node(random.choice(gates)))
@@ -71,6 +70,8 @@ class Network:
         self.input_nodes = random.sample(connected, n_inputs)
         for i in range(n_inputs):
             self.nodes[self.input_nodes[i]].add_parent(self.graph_size + i)
+
+        assert len(self.nodes) == graph_size, "random initialization produced more nodes than expected"
 
     def save(self, filename):
         with open(filename, mode="wb") as f:
@@ -96,6 +97,12 @@ class Network:
         print('# of net states: {}'.format(len(self.network_state)))
         print('input shape: ({})'.format(len(self.input_nodes)))
         print('output shape: ({})'.format(len(self.out_nodes)))
+        print('nodes max parents number: {}'.format(max([len(n.parents) for n in self.nodes])))
 
     def check_network(self):
         assert (len(self.nodes) == len(self.network_state) - len(self.input_nodes)), "number of nodes is different from number of states minus input shape"
+
+    def swap_states_reference(self):
+        s = self.activations
+        self.activations = self.network_state
+        self.network_state = s

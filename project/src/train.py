@@ -34,7 +34,7 @@ def genetic_step(population, fitness):
     pop_sorted_zipped = sorted(zip(population, fitness), key=lambda p: -p[1])
     pop_sorted, fitness_sorted = zip(*pop_sorted_zipped)
 
-    elite_n = len(pop_sorted) * ELITISM
+    elite_n = int(len(pop_sorted) * ELITISM)
     new_pop_n = POPULATION_SIZE - elite_n
     if new_pop_n % 2 == 1:
         elite_n -= 1
@@ -43,7 +43,7 @@ def genetic_step(population, fitness):
     elite = pop_sorted[-elite_n:]
 
     newborns = []
-    for _ in range(new_pop_n / 2):
+    for _ in range(int(new_pop_n / 2)):
         parents = random.choices(pop_sorted, weights=fitness_sorted, k=2)
         newborns.extend(crossover(parents))
     mutate(newborns)
@@ -62,15 +62,20 @@ def mutate(pop):
 
 
 def crossover(parents):
-    genomes = [parent.get_genome() for parent in parents]
+    genomes = [parent.get_chromosome() for parent in parents]
     cut = random.choice(range(len(genomes[0])))
 
-    child0 = []
-    child1 = []
-    child0.extend(genomes[0][:cut])
-    child0.extend(genomes[1][cut:])
-    child1.extend(genomes[1][:cut])
-    child1.extend(genomes[0][cut:])
+    chromosome0 = []
+    chromosome1 = []
+    chromosome0.extend(genomes[0][:cut])
+    chromosome0.extend(genomes[1][cut:])
+    chromosome1.extend(genomes[1][:cut])
+    chromosome1.extend(genomes[0][cut:])
+
+    child0 = network.Network()
+    child0.set_chromosome(chromosome0)
+    child1 = network.Network()
+    child1.set_chromosome(chromosome1)
 
     return [child0, child1]
 
@@ -79,10 +84,8 @@ def simulate(env, net):
     observation = env.reset()
     tot_reward = 0
     for i in range(1000):
-        descrete = bool_utils.discretize_1bool(observation, env.observation_space)
-        print('discrete input - {}'.format(descrete))
-        action = net.step(descrete)
-        print('action - {}'.format(action))
+        discrete = [True, True, False, False]  # bool_utils.discretize_1bool(observation, env.observation_space)
+        action = net.step(discrete)
         observation, reward, done, info = env.step(1 if action else -1)
         tot_reward += reward
         if done:
@@ -92,13 +95,14 @@ def simulate(env, net):
 
 def init():
     env = gym.make(GYM)
-    input_space = env.observation_space.shape
-    input_space = input_space[0]  # flatten space
+    input_space = env.observation_space.shape[0]  # flatten space
     output_space = env.action_space.n
 
     population = [network.Network() for _ in range(POPULATION_SIZE)]
     for net in population:
         net.random_init(input_space, output_space, NETWORK_SIZE)
+
+    population[0].print_info()
 
     return (population, env)
 
