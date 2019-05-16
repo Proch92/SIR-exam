@@ -5,12 +5,12 @@ import bool_utils
 import genetic
 
 # genetic
-POPULATION_SIZE = 5
+POPULATION_SIZE = 80
 ELITISM = 0.4
-MUTATION_RATE = 0.05
+MUTATION_RATE = 0.1
 
 # other const
-NETWORK_SIZE = 50
+NETWORK_SIZE = 100
 GYM = 'CartPole-v1'
 
 

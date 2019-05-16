@@ -20,7 +20,7 @@ class Network:
         self.swap()
 
         for i, inp in enumerate(inputs):
-            self.state[self.graph_size + i] = inp
+            self.state[self.input_nodes[i]] = inp
 
         for i in range(self.graph_size):
             self.activations[i] = self.nodes[i].activate(self.state, self.gates[i])
@@ -33,8 +33,8 @@ class Network:
         self.state = s
 
     def init_swaps(self):
-        self.state = random.choices([False, True], k=(self.graph_size + len(self.input_nodes)))
-        self.activations = random.choices([False, True], k=(self.graph_size + len(self.input_nodes)))
+        self.state = random.choices([False, True], k=(self.graph_size))
+        self.activations = random.choices([False, True], k=(self.graph_size))
 
     def print_info(self):
         print('# of nodes: {}'.format(len(self.nodes)))
@@ -72,27 +72,15 @@ class Network:
 
     @staticmethod
     def random_topology(n_inputs, n_outputs, graph_size):
-        connected = []
         nodes = []
 
-        nodes.append(Node())
-        connected.append(0)
-
-        for i in range(1, graph_size):
+        for i in range(graph_size):
             nodes.append(Node())
-            goto = random.choice(connected)
-            parent = random.choice(connected)
-            nodes[i].add_parent(parent)
-            nodes[goto].add_parent(i)
-            connected.append(i)
+            parents = random.sample(range(graph_size), 2)
+            nodes[i].add_parents(parents)
 
-        nodes[0].add_parent(random.choice(connected))
-        nodes[random.choice(connected)].add_parent(0)
-
-        output_nodes = random.sample(connected, n_outputs)
-        input_nodes = random.sample(connected, n_inputs)
-        for i in range(n_inputs):
-            nodes[input_nodes[i]].add_parent(graph_size + i)
+        output_nodes = random.sample(range(graph_size), n_outputs)
+        input_nodes = random.sample(range(graph_size), n_inputs)
 
         assert len(nodes) == graph_size, "random initialization produced more nodes than expected"
 
