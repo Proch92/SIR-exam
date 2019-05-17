@@ -1,10 +1,10 @@
 import gym
 import sys
 from markov_q_rl import Markov_QL
+import matplotlib.pyplot as plt
 
 
 GYM = 'MountainCar-v0'
-# GYM = 'CartPole-v1'
 
 
 def main():
@@ -18,6 +18,9 @@ def main():
 
     print('observation space: {}'.format(env.observation_space.shape))
     print('actions space: {}'.format(env.action_space))
+
+    rewards = []
+    best_results = []
 
     max_pos = -0.39
     min_episodes = 500
@@ -37,17 +40,26 @@ def main():
             if done:
                 if episode + 1 < min_episodes:
                     min_episodes = episode + 1
+                rewards.append(tot_reward)
+                best_results.append(min_episodes)
                 print('{} - record: {} - reward: {}'.format(epoch + 1, min_episodes, tot_reward))
                 break
+
+    plt.plot(rewards)
+    plt.xlabel('epoch')
+    plt.ylabel('reward')
+    plt.show()
 
     # test
     observation = env.reset()
     for _ in range(200):
         env.render()
-        action = ql.action(observation)
+        action = ql.action(observation, train=False)
         observation, reward, done, info = env.step(action)
 
     env.close()
+
+    ql.save('markov.bin')
 
 
 if __name__ == '__main__':

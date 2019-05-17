@@ -1,12 +1,13 @@
 import random
 import numpy as np
 import utils
+import dill
 
 
 EXPLORATION = 0.3
-MIN_EXPLORATION = 0.05
+MIN_EXPLORATION = 0.1
 EXPLORATION_DEC = 0.00001
-QUANTA = 100
+QUANTA = 200
 GAMMA = 0.8
 
 
@@ -25,8 +26,8 @@ class Markov_QL(object):
 
         self.exploration_p = EXPLORATION
 
-    def action(self, state):
-        if random.random() < self.exploration_p:
+    def action(self, state, train=True):
+        if train and (random.random() < self.exploration_p):
             return self.action_space.sample()
 
         self.exploration_p -= EXPLORATION_DEC
@@ -41,3 +42,12 @@ class Markov_QL(object):
         new_state = utils.discretize(new_state, self.observation_space, QUANTA)
 
         self.q[tuple(state)][action] = reward + GAMMA * max(self.q[tuple(new_state)])
+
+    def save(self, filename):
+        with open(filename, 'wb') as f:
+            dill.dump(self, f)
+
+    @staticmethod
+    def load(filename):
+        with open(filename, 'rb') as f:
+            return dill.load(f)
