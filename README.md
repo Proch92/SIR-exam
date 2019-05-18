@@ -1,3 +1,5 @@
 # Sistemi Intelligenti Robotici
+Course lab code and course final projects
 
-[### Markov RL Q-Learning](project/rl/readme.md)
+### Course final projects in Reinforcement Learning
+[Markov Q-Learning](project/rl/readme.md)
