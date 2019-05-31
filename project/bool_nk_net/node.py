@@ -10,4 +10,5 @@ class Node:
         self.parents.extend(_parents)
 
     def activate(self, past, gate):
+        # print("{} {} -> {}".format(past[self.parents[0]], past[self.parents[1]], gate([past[self.parents[0]], past[self.parents[1]]])))
         return gate([past[p] for p in self.parents])
