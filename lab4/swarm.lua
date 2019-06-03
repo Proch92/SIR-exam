@@ -43,7 +43,7 @@ function countRAB()
 	max_chain = 0
 
 	for i = 1, #robot.range_and_bearing do
-		if robot.range_and_bearing[i].range < SENSE_RANGE and robot.range_and_bearing[i].data[1] == 1 then
+		if robot.range_and_bearing[i].range < SENSE_RANGE then
 			number_robot_sensed = number_robot_sensed + 1
 			max_chain = math.max(number_robot_sensed, robot.range_and_bearing[i].data[2])
 		end
