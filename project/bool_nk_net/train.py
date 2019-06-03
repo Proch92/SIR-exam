@@ -11,7 +11,7 @@ MUTATION_RATE = 0.1
 
 # other const
 NETWORK_SIZE = 100
-GYM = 'CartPole-v1'
+GYM = 'FrozenLake8x8-v0'
 
 
 def main():
@@ -48,7 +48,8 @@ def simulate(env, net):
 
 def init():
     env = gym.make(GYM)
-    input_space = env.observation_space.shape[0]  # flatten space
+
+    input_space = env.observation_space.n  # flatten space
     output_space = env.action_space.n
 
     topology = network.Network.random_topology(input_space, output_space, NETWORK_SIZE)

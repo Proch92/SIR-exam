@@ -11,7 +11,7 @@ class Network:
         self.input_nodes = input_nodes
         self.output_nodes = output_nodes
         self.graph_size = len(self.nodes)
-        self.gates = random.choices(gates.gates, k=self.graph_size)
+        self.gates = random.choices(range(len(gates.boolean_matrix)), k=self.graph_size)
         self.init_swaps()
 
     def step(self, inputs):

@@ -13,4 +13,4 @@ gates = [
     lambda ins: not ins[1],
 ]
 
-boolean_matrix = list(itertools.product([0, 1], repeat=1))
+boolean_matrix = list(itertools.product([0, 1], repeat=4))
