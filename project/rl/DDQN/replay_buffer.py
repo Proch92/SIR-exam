@@ -22,7 +22,7 @@ class Replay_buffer(object):
     def sample(self, quantity):
         samples = random.sample(self.replays, min(quantity, self.filled))
 
-        (s0, _, _, _, _, _) = samples[0]
+        (s0, _, _, _, _) = samples[0]
 
         batch_states = np.empty([0, s0.shape[1]])
         batch_actions = []
@@ -30,7 +30,7 @@ class Replay_buffer(object):
         batch_rewards = []
         batch_final = []
 
-        for (s, q, a, r, s_t1, final) in samples:
+        for (s, a, r, s_t1, final) in samples:
             batch_states = np.append(batch_states, s, axis=0)
             batch_actions.append(a)
             batch_s_t1 = np.append(batch_s_t1, s_t1, axis=0)

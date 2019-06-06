@@ -4,24 +4,32 @@ import numpy as np
 import sys
 from replay_buffer import Replay_buffer
 import tensorflow as tf
+import random
+import os.path
 
 tf.enable_eager_execution()
 
 GYM = "CartPole-v0"
-TARGET_RESET_FREQ = 50
-REPLAY_BUFFER_SIZE = 1000
-BATCH_SIZE = 10
+TARGET_RESET_FREQ = 100
+REPLAY_BUFFER_SIZE = 10000
+BATCH_SIZE = 50
 DISCOUNT = 0.95
-TRAINING_START = BATCH_SIZE * 5
-TRAINING_FREQ = 5
+TRAINING_START = BATCH_SIZE * 50
+TRAINING_FREQ = 10
+
+# epsilon greedy exploration
+E_START = 0.8
+E_STOP = 0.01
+E_STEP = (E_START - E_STOP) / 10**3
 
 
 def main():
-    if len(sys.argv) != 2:
-        print('usage: python ' + sys.argv[0] + ' epochs')
+    if len(sys.argv) != 3:
+        print('usage: python ' + sys.argv[0] + ' epochs [weights_path]')
         exit(0)
 
     epochs = int(sys.argv[1])
+    weights_path = sys.argv[2]
 
     env = gym.make(GYM)
     input_shape = env.observation_space.shape[0]
@@ -29,14 +37,10 @@ def main():
     print('environment: in: ({}) out: ({})'.format(input_shape, output_shape))
 
     ddqn = DDQN(input_shape, output_shape)
+    if os.path.exists(weights_path):
+        ddqn.load_weights(weights_path)
 
     optimizer = tf.train.AdamOptimizer()
-
-    # test
-    state = env.reset()
-    print('TEST - state: {}'.format(state))
-    q = ddqn.predict(np.expand_dims(state, 0))
-    print('TEST - prediction: {}'.format(q))
 
     # init training
     replay_buffer = Replay_buffer(REPLAY_BUFFER_SIZE)
@@ -45,17 +49,23 @@ def main():
 
     target_reset_count = 0
     train_counter = 0
+    epsilon_explore = E_START
 
     for epc in range(epochs):
         state = env.reset()
         state = np.expand_dims(state, 0)
         for _ in range(1000):
+            # action selection
+            if random.random() < epsilon_explore:
+                action = random.randint(0, output_shape - 1)
+            else:
+                q_values = ddqn.predict(state)
+                action = np.argmax(q_values)
+
             # simulation
-            q_values = ddqn.predict(state)
-            action = np.argmax(q_values)
             next_state, reward, done, info = env.step(action)
             next_state = np.expand_dims(next_state, 0)
-            replay_buffer.add((state, q_values, action, reward, next_state, 0 if done else 1))
+            replay_buffer.add((state, action, reward, next_state, 0 if done else 1))
             state = next_state
 
             # training
@@ -76,12 +86,16 @@ def main():
                     y_target = batch_rewards + (DISCOUNT * target_expected_rewards * batch_final)
 
                     # loss
-                    loss_value = tf.reduce_mean(tf.pow(y_prediction - y_target, 2))
-                    print(float(loss_value))
+                    loss_value = tf.reduce_mean(tf.pow(y_target - y_prediction, 2))
 
                 grads = tape.gradient(loss_value, ddqn.trainable_variables)
 
                 optimizer.apply_gradients(zip(grads, ddqn.trainable_variables))
+
+                if train_counter % 100 == 0:
+                    print('[{} / {}] - loss: {:8.4f}'.format(epc, epochs, float(loss_value)))
+
+            epsilon_explore = max(epsilon_explore - E_STEP, E_STOP)
 
             target_reset_count += 1
             if target_reset_count == TARGET_RESET_FREQ:
@@ -91,14 +105,20 @@ def main():
             if done:
                 break
 
+    ddqn.save_weights(weights_path)
 
-def construct_y(e, ddqn, target_network):
-    (s, q, a, r, s_t1, final) = e
-    if final:
-        return r
-    else:
-        amax = np.argmax(ddqn.predict(s_t1))
-        return r + DISCOUNT * target_network.predict(s_t1)[0][amax]
+    # let's try it
+    obs = env.reset()
+    obs = np.expand_dims(obs, 0)
+    for _ in range(1000):
+        env.render()
+        q_values = ddqn.predict(obs)
+        action = np.argmax(q_values)
+        obs, reward, done, info = env.step(action)
+        obs = np.expand_dims(obs, 0)
+
+        if done:
+            break
 
 
 if __name__ == '__main__':

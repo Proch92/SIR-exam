@@ -7,9 +7,6 @@ class DDQN(tf.keras.Model):
     def __init__(self, input_shape, output_shape):
         super(DDQN, self).__init__(name='dqn_model')
 
-        self.input_shape_ = input_shape
-        self.output_shape_ = output_shape
-
         self.dense = tf.keras.Sequential([
             tf.keras.layers.Dense(256, activation='relu', input_shape=(input_shape,)),
             tf.keras.layers.Dropout(0.2),
@@ -32,7 +29,6 @@ class DDQN(tf.keras.Model):
 
     def call(self, input):
         input = tf.cast(input, dtype=tf.float32)
-        # input = tf.reshape(input, [1, self.input_shape_])
 
         x = self.dense(input)
         value = self.value(x)
