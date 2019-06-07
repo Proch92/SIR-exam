@@ -39,3 +39,6 @@ class DDQN(tf.keras.Model):
         q = value + (advantages - average_a)
 
         return q
+
+    def save_custom(self, path):
+        pass

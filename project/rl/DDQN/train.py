@@ -110,9 +110,9 @@ def main():
             if done:
                 break
         if epc % 10 == 0:
-                print('[{}/{}], e: {:5.4f} - loss: {:10.6f} - reward: {}'.format(epc, epochs, epsilon_explore, float(loss_value), tot_reward))
+                print('[{:2.1f}%], e: {:5.4f} - loss: {:10.6f} - last episode reward: {}'.format((epc * 100) / epochs, epsilon_explore, float(loss_value), tot_reward))
 
-    ddqn.save_weights(weights_path)
+    ddqn.save_weights(weights_path, save_format='h5')
 
     # let's try it
     obs = env.reset()
