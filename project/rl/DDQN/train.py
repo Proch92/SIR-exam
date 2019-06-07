@@ -6,21 +6,26 @@ from replay_buffer import Replay_buffer
 import tensorflow as tf
 import random
 import os.path
+import math
 
 tf.enable_eager_execution()
 
-GYM = "CartPole-v0"
-TARGET_RESET_FREQ = 100
-REPLAY_BUFFER_SIZE = 10000
+GYM = "CartPole-v1"
+TARGET_RESET_FREQ = 20
+REPLAY_BUFFER_SIZE = 1000
 BATCH_SIZE = 50
-DISCOUNT = 0.95
-TRAINING_START = BATCH_SIZE * 50
-TRAINING_FREQ = 10
+DISCOUNT = 0.9
+TRAINING_START = BATCH_SIZE + 100
+TRAINING_FREQ = 5
 
 # epsilon greedy exploration
-E_START = 0.8
-E_STOP = 0.01
-E_STEP = (E_START - E_STOP) / 10**3
+E_START = 1
+E_MIN = 0.01
+E_DECAY = 1000
+
+
+def get_epsilon(epoc):
+    return E_MIN + (E_START - E_MIN) * math.exp(-1. * epoc / E_DECAY)
 
 
 def main():
@@ -50,13 +55,15 @@ def main():
     target_reset_count = 0
     train_counter = 0
     epsilon_explore = E_START
+    loss_value = 0
 
     for epc in range(epochs):
         state = env.reset()
         state = np.expand_dims(state, 0)
+        tot_reward = 0
         for _ in range(1000):
             # action selection
-            if random.random() < epsilon_explore:
+            if random.random() <= epsilon_explore:
                 action = random.randint(0, output_shape - 1)
             else:
                 q_values = ddqn.predict(state)
@@ -67,6 +74,7 @@ def main():
             next_state = np.expand_dims(next_state, 0)
             replay_buffer.add((state, action, reward, next_state, 0 if done else 1))
             state = next_state
+            tot_reward += reward
 
             # training
             train_counter += 1
@@ -75,8 +83,8 @@ def main():
 
                 with tf.GradientTape() as tape:
                     # actual prediction
-                    action_rewards = tf.stack([tf.range(BATCH_SIZE, dtype=tf.int64), batch_actions], axis=1)
-                    y_prediction = tf.gather_nd(ddqn(batch_states), action_rewards)
+                    action_indexes = tf.stack([tf.range(BATCH_SIZE, dtype=tf.int64), batch_actions], axis=1)
+                    y_prediction = tf.gather_nd(ddqn(batch_states), action_indexes)
 
                     # targets
                     amax = tf.argmax(ddqn(batch_s_t1), axis=1)
@@ -92,10 +100,7 @@ def main():
 
                 optimizer.apply_gradients(zip(grads, ddqn.trainable_variables))
 
-                if train_counter % 100 == 0:
-                    print('[{} / {}] - loss: {:8.4f}'.format(epc, epochs, float(loss_value)))
-
-            epsilon_explore = max(epsilon_explore - E_STEP, E_STOP)
+            epsilon_explore = get_epsilon(train_counter)
 
             target_reset_count += 1
             if target_reset_count == TARGET_RESET_FREQ:
@@ -104,6 +109,8 @@ def main():
 
             if done:
                 break
+        if epc % 10 == 0:
+                print('[{}/{}], e: {:5.4f} - loss: {:10.6f} - reward: {}'.format(epc, epochs, epsilon_explore, float(loss_value), tot_reward))
 
     ddqn.save_weights(weights_path)
 
@@ -119,6 +126,10 @@ def main():
 
         if done:
             break
+
+    env.close()
+
+    print(ddqn([[0, 0, 0, 0]]))
 
 
 if __name__ == '__main__':
