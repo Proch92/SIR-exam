@@ -7,7 +7,7 @@ import tensorflow as tf
 
 tf.enable_eager_execution()
 
-GYM = "CartPole-v1"
+GYM = "LunarLander-v2"
 
 
 def main():
@@ -26,10 +26,10 @@ def main():
     ddqn = DDQN(input_shape, output_shape)
     if os.path.exists(weights_path):
         ddqn.load_weights(weights_path)
-    print(ddqn([[0, 0, 0, 0]]))
 
     state = env.reset()
     state = np.expand_dims(state, 0)
+    tot_reward = 0
     for _ in range(1000):
         env.render()
 
@@ -39,11 +39,13 @@ def main():
         next_state, reward, done, info = env.step(action)
         next_state = np.expand_dims(next_state, 0)
         state = next_state
+        tot_reward += reward
 
         if done:
             break
 
     env.close()
+    print('total reward: {}'.format(tot_reward))
 
 
 if __name__ == '__main__':

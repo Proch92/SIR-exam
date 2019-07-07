@@ -10,11 +10,11 @@ import math
 
 tf.enable_eager_execution()
 
-GYM = "CartPole-v1"
+GYM = "LunarLander-v2"
 TARGET_RESET_FREQ = 20
-REPLAY_BUFFER_SIZE = 1000
+REPLAY_BUFFER_SIZE = 2000
 BATCH_SIZE = 50
-DISCOUNT = 0.9
+DISCOUNT = 0.99
 TRAINING_START = BATCH_SIZE + 100
 TRAINING_FREQ = 5
 
@@ -22,6 +22,7 @@ TRAINING_FREQ = 5
 E_START = 1
 E_MIN = 0.01
 E_DECAY = 1000
+E_RESET_FREQ = 50000
 
 
 def get_epsilon(epoc):
@@ -54,6 +55,7 @@ def main():
 
     target_reset_count = 0
     train_counter = 0
+    e_counter = 0
     epsilon_explore = E_START
     loss_value = 0
 
@@ -100,7 +102,11 @@ def main():
 
                 optimizer.apply_gradients(zip(grads, ddqn.trainable_variables))
 
-            epsilon_explore = get_epsilon(train_counter)
+            if train_counter > TRAINING_START:
+                e_counter += 1
+                epsilon_explore = get_epsilon(e_counter)
+            if e_counter > E_RESET_FREQ:
+                e_counter = 0
 
             target_reset_count += 1
             if target_reset_count == TARGET_RESET_FREQ:
@@ -128,8 +134,6 @@ def main():
             break
 
     env.close()
-
-    print(ddqn([[0, 0, 0, 0]]))
 
 
 if __name__ == '__main__':
