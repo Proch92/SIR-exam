@@ -1,6 +1,9 @@
 \documentclass{article}
+\usepackage{cite}
+\usepackage{url}
 
-\title{Relazione di progetto: Sistemi Intelligenti Robotici}
+\title{Implementazione di un algoritmo Q-Learning con Q discreta e Double Dueling Deep Q-Learning}
+
 \date{2019-06-01}
 \author{Michele Proverbio}
 
@@ -9,6 +12,16 @@
 	\maketitle
 	\newpage
 	\pagenumbering{arabic}
-	
-	Hello World!!
+
+	\section{Introduzione}
+		Il Reinforcement Learning è un'area del Machine Learning che studia l'apprendimento automatico di un task da parte di un agente. Quest'ultimo è immerso in un ambiente che restituisce all'agente un feedback proporzionale all'efficacia delle sue azioni rispetto al task.
+
+		Lo scopo del progetto è implementare due algoritmi di Q-learning: una implementazione naive con Q discreta, e un algoritmo Double Dueling Deep Q-learning \cite{1509.06461} \cite{1511.06581} sviluppato da DeepMind \cite{DeepMind} per il framework di benchmark Atari \cite{Atari}. Entrambi gli algoritmi verranno testati in ambienti virtuali di OpenAI Gym \cite{open.ai}.
+
+	\section{Q-learning}
+	\subsection{}
+
+	\newpage
+	\bibliography{mybib}{}
+	\bibliographystyle{plain}
 \end{document}

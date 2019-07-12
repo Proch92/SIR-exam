@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+
+\bibitem{open.ai}
+Openai gym.
+\newblock \url{gym.openai.com}.
+\newblock Accessed: 2019-07-19.
+
+\bibitem{1511.06581}
+Ziyu Wang, Tom Schaul, Matteo Hessel, Hado van Hasselt, Marc Lanctot, and Nando
+  de~Freitas.
+\newblock Dueling network architectures for deep reinforcement learning, 2015.
+
+\end{thebibliography}
