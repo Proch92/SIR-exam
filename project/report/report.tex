@@ -1,8 +1,11 @@
 \documentclass{article}
 \usepackage{cite}
 \usepackage{url}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{float}
 
-\title{Implementazione di un algoritmo Q-Learning con Q discreta e Double Dueling Deep Q-Learning}
+\title{Implementazione di un algoritmo Double Dueling Deep Q-Learning}
 
 \date{2019-06-01}
 \author{Michele Proverbio}
@@ -16,10 +19,58 @@
 	\section{Introduzione}
 		Il Reinforcement Learning è un'area del Machine Learning che studia l'apprendimento automatico di un task da parte di un agente. Quest'ultimo è immerso in un ambiente che restituisce all'agente un feedback proporzionale all'efficacia delle sue azioni rispetto al task.
 
-		Lo scopo del progetto è implementare due algoritmi di Q-learning: una implementazione naive con Q discreta, e un algoritmo Double Dueling Deep Q-learning \cite{1509.06461} \cite{1511.06581} sviluppato da DeepMind \cite{DeepMind} per il framework di benchmark Atari \cite{Atari}. Entrambi gli algoritmi verranno testati in ambienti virtuali di OpenAI Gym \cite{open.ai}.
+		Lo scopo del progetto è implementare un algoritmo Double Dueling Deep Q-learning \cite{nature_dqn} \cite{1509.06461} \cite{1511.06581} sviluppato da DeepMind \cite{deepmind} per il framework di benchmark Atari. L'algoritmo verrà testato nell'ambiente virtuale \textit{CartPole-v1} di OpenAI Gym \cite{open.ai}.
 
-	\section{Q-learning}
-	\subsection{}
+	\section{Double Dueling Deep Q-learning}
+	\subsection{Deep Q-Learning}
+		Il breakthrough del Deep Learning applicato al Reinforcement Learning arriva con la successiva pubblicazione di \textit{Playing Atari with Deep Reinforcement Learning} \cite{nature_dqn} su \textit{Nature} nel 2013 da DeepMind. Nell'articolo viene introdotto un algoritmo per Reinforcement Learning (RL) che riesce ad imparare policy da un input a grande dimensionalità. Il modello proposto è una rete convoluzionale che riceve in input i render dall'emulatore Atari (RGB 210 x 160 processate in bianco e nero e ridotte a 84 x 84) e restituisce i Q-valori di tutte le possibili azioni in un unico passaggio feed-forward. Uno dei concetti fondamentali proposti è l'approssimazione di una variante della funzione Q: si passa da una funzione che dato uno stato e un'azione restituisce il reward aspettato, ad una funzione che dato uno stato restituisce il reward per ogni azione possibile.
+
+		Altro strumento introdotto è il \textit{Replay Buffer}, che spezza concettualmente il ciclo di apprendimento classico del RL. L'esperienza derivante dal feedback dell'azione sull'ambiente non viene usata immediatamente per ottimizzare la funzione di costo, ma viene salvata in un buffer a dimensione fissa. La fase di learning avviene estraendo un mini batch dal replay buffer con distribuzione uniforme. Il principale vantaggio dell'utilizzo di un replay buffer è che viene spezzata la forte correlazione che esiste tra esperienze di stati consecutivi, e porta ultimamente a diminuire la probabilità che il modello abbia un apprendimento divergente.
+
+		L'algoritmo viene presentato in pseudo codice nella figura \ref{fig:dqn_algo}.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=\linewidth]{dqnalgo.png}
+			\caption{DQN algortihm presentato nell'articolo \cite{nature_dqn}}
+			\label{fig:dqn_algo}
+		\end{figure}
+
+	\subsection{Double Q-learning}
+		Nell'articolo \textit{Deep Reinforcement Learning with Double Q-learning} di Silver et al. viene introdotta una variante dell'algoritmo DQN per attaccare il problema di sovrastimazione della funzione Q. L'algoritmo propone di disaccoppiare la selta greedy dell'azione dalla valutazione dell'azione stessa. Alla rete principale viene affiancata una seconda rete neuronale detta \textit{target network} i cui pesi $\theta^{-}$ vengono aggiornati in base ai pesi $\theta$ della rete online in maniera asincrona ogni $\tau$ passi.
+
+		La funzione di target per il calcolo della loss diventa:\\
+
+		$y_{i}^{D D Q N}=r+\gamma Q\left(s^{\prime}, \arg \max _{a^{\prime}} Q\left(s^{\prime}, a^{\prime} ; \theta_{i}\right) ; \theta^{-}\right)$
+
+	\subsection{Dueling DDQN}
+		Wang et al. in \textit{Dueling Network Architectures for Deep Reinforcement Learning} \cite{1511.06581} propongono una variante al modello convoluzionale usato fino a quel momento. L'intuizione su cui si basa il lavoro è che se l'agente si trova in uno stato svantaggioso non avrà importanza quale azione sceglierà. Questa idea viene concretizzata disaccoppiando l'apprendimento delle coppie $Q\left(s, a\right)$ nell'apprendimento di due funzioni separate: una che valuta il valore dello stato in cui si trova l'agente e la seconda che valuta i vantaggi derivanti dalle azioni.
+
+		Nell'immagine \ref{fig:dueling_arch} viene visualizzata la nuova architettura che divide esplicitamente il calcolo del valore dello stato da quello delle azioni.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.5\linewidth]{dueling_arch.png}
+			\caption{Immagine presa dall'articolo \cite{1511.06581}. Viene mostrata la differenza tra l'archittettura classica (in alto) con diversi strati convoluzionali e uno strato fully connected e l'archittetura proposta (in basso) che sdoppia l'ultimo strato in due flussi: il primo risulta in uno scalare e rappresenta il valore (\textit{value}) dello stato e il secondo risulta nei vantaggi (advantage) per ogni azione}
+			\label{fig:dueling_arch}
+		\end{figure}
+
+	\section{Ambiente OpenAI Gym}
+		Come ambiente virtuale di benchmark è stata utilizzata la Gym di OpenAI \cite{open.ai}, in particolare è stato scelto il task CartPole-v1 nel quale l'agente controlla con azioni discrete (spinta a sx, spinta a dx, nessuna azione) un carrello con un'asta attaccata ad esso da un perno (come mostrato in figura \ref{fig:cartpole}). L'obiettivo dell'agente è mantenere in equilibrio l'asta per più tempo possibile.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.3\linewidth]{cartpole.png}
+			\caption{Fermo immagine di una sessione per il task CartPole-v1 di OpenAI Gym}
+			\label{fig:cartpole}
+		\end{figure}
+
+	\section{Implementazione}
+	\subsection{Architettura del modello}
+
+
+	\subsection{tecnologie utilizzate}
+		Per l'implementazione del modello è stato 
 
 	\newpage
 	\bibliography{mybib}{}
