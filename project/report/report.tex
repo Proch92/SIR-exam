@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{float}
+\usepackage{pseudocode}
 
 \title{Implementazione di un algoritmo Double Dueling Deep Q-Learning}
 
@@ -65,12 +66,65 @@
 			\label{fig:cartpole}
 		\end{figure}
 
+		L'ambiente restituisce un reward di +1 all'agente ad ogni timestep e chiude l'episodio se l'asta supera un'inclinazione di 15 gradi o se il carrello si sposta troppo dal centro.
+
 	\section{Implementazione}
 	\subsection{Architettura del modello}
+		L'architettura usata per il progetto è simile alla rete illustrata nell'immagine \ref{fig:dueling_arch} ma con una rete a 3 strati \textit{fully connected} al posto di quella convoluzionale. \\
 
+		\begin{tabular}{| c | c |}
+			\hline
+			\multicolumn{2}{|c|}{rete fully connected} \\
+			\hline
+			\multicolumn{2}{|c|}{\textit{input} x 256} \\
+			\multicolumn{2}{|c|}{256 x 128} \\
+			\multicolumn{2}{|c|}{128 x 64} \\
+			\hline
+			value & advantage \\
+			\hline
+			64 x 32 & 64 x 32 \\
+			32 x 1 & 32 x \textit{actions} \\
+			\hline
+		\end{tabular}
 
-	\subsection{tecnologie utilizzate}
-		Per l'implementazione del modello è stato 
+	\subsection{Algoritmo}
+		L'algoritmo si divide in una fase di inizializzazione e una fase di training. \\
+		Nella fase di inizializzazione:
+		\begin{itemize}
+		\item viene istanziato il replay buffer e la memoria viene inizializzata in base al parametro \texttt{REPLAY\_BUFFER\_SIZE}
+		\item viene istanziato il modello e vengono caricati i pesi da file se specificato. $\theta$ = $load\_or\_init()$
+		\item viene creata la target network duplicando la rete appena istanziata. i pesi della rete primaria vengono copiati nella target network. $\theta^{-}$ = $\theta$
+		\item viene inizializzata la variabile $\epsilon$ a \texttt{E\_START}
+		\end{itemize}
+
+		Il ciclo di training procede nel seguente modo:
+
+		\begin{pseudocode}{Dueling DDQN}{epochs}
+			\REPEAT
+				S \GETS env.GetState() \\
+				\REPEAT
+					$\IF random() < \epsilon$
+					$\THEN action \GETS RandomAction()$
+					$\ELSE action \GETS \arg \max(Q(S; \theta))$ \\
+
+					$S^{\prime}, reward \GETS env.act(action)$ \\
+					$insert (S, action, S^{\prime}, reward)\ into\ ReplayBuffer$ \\
+
+					$S_{b}, a_{b}, S_{b}^{\prime}, r_{b} \GETS ReplayBuffer.sample(BATCH\_SIZE)$ \\
+					$targetY \GETS r_{b} + \gamma Q\left(S_{b}^{\prime}, \arg \max _{a_{b}^{\prime}} Q\left(S_{b}^{\prime}, a_{b}^{\prime} ; \theta\right) ; \theta^{-}\right)$ \\
+					$loss \GETS MeanSquaredError(targetY - Y_{b})$ \\
+					$ApplyGradients(loss, \theta)$ \\
+
+					$every \tau\ steps\ \theta^{-} \GETS \theta$
+
+				\UNTIL $episode\_over$
+			\UNTIL epochs
+		\end{pseudocode}
+
+	\subsection{Tecnologie utilizzate e dettagli implementativi}
+		Tutto il progetto è stato sviluppato in python 3.7. \\
+		Per l'implementazione del modello è stato utilizzato tensorflow 2.0 per l'auto differenziazione del gradiente e keras per la definizione e il training della rete neuronale. \\
+		I dettagli implementativi più interessanti sono il \textit{submoduling} del modello keras per l'inserimento in maniera trasparente dell'ultimo livello che combina i flussi di value e advantage, e l'uso del \textit{gradient tape} per l'auto differenziazione di quest'ultimo.
 
 	\newpage
 	\bibliography{mybib}{}
