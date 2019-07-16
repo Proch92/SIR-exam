@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2019.7.7)  15 JUL 2019 19:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2019.7.7)  16 JUL 2019 14:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -263,26 +263,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 73--74
  []
 
 [3 <./dueling_arch.png (PNG copy)> <./cartpole.png (PNG copy)>]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 94.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 96.
 
 (/usr/share/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 94.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 96.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.106 					$\IF random() < \epsilon
-                                   $
+l.108 					\IF random() <\ $\epsilon
+                                    $
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.109 
+l.111 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -290,31 +290,31 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.110 					$S^
-              {\prime}, reward \GETS env.act(action)$ \\
+l.112 					$s^
+              {\prime}, r \GETS env.act(a)$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.111 					$
-            insert (S, action, S^{\prime}, reward)\ into\ ReplayBuffer$ \\
+l.113 					$
+            insert (s, a, s^{\prime}, r)\ into\ ReplayBuffer$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.111 					$insert (S, action, S^
-                                 {\prime}, reward)\ into\ ReplayBuffer$ \\
+l.113 					$insert (s, a, s^
+                            {\prime}, r)\ into\ ReplayBuffer$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.112 
+l.114 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -322,40 +322,8 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.113 					$S_
-              {b}, a_{b}, S_{b}^{\prime}, r_{b} \GETS ReplayBuffer.sample(BA...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.114 					$
-            targetY \GETS r_{b} + \gamma Q\left(S_{b}^{\prime}, \arg \max _{...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.114 					$targetY \GETS
-                          r_{b} + \gamma Q\left(S_{b}^{\prime}, \arg \max _{...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.115 					$
-            loss \GETS MeanSquaredError(targetY - Y_{b})$ \\
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.115 					$loss \GETS
-                       MeanSquaredError(targetY - Y_{b})$ \\
+l.115 					$s_
+              {b}, a_{b}, s_{b}^{\prime}, r_{b} \GETS ReplayBuffer.sample(BA...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
@@ -363,6 +331,38 @@ you left one out. Proceed, with fingers crossed.
 <inserted text> 
                 $
 l.116 					$
+            targetY \GETS r_{b} + \gamma Q\left(s_{b}^{\prime}, \arg \max _{...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.116 					$targetY \GETS
+                          r_{b} + \gamma Q\left(s_{b}^{\prime}, \arg \max _{...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.117 					$
+            loss \GETS MeanSquaredError(targetY - Y_{b})$ \\
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.117 					$loss \GETS
+                       MeanSquaredError(targetY - Y_{b})$ \\
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.118 					$
             ApplyGradients(loss, \theta)$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -370,7 +370,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.116 					$ApplyGradients(loss, \theta
+l.118 					$ApplyGradients(loss, \theta
                                        )$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -378,7 +378,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.117 
+l.119 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -386,45 +386,88 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.118 					$every \tau
-                      \ steps\ \theta^{-} \GETS \theta$
+l.120 					$every \tau
+                      \ steps\ \theta^{-} \GETS \theta$ \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.120 				\UNTIL
+l.121 					$
+            update\ \epsilon$
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.121 					$update\ \epsilon
+                            $
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.123 				\UNTIL
                  $episode\_over$
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-[4] [5] (./report.bbl) [6] (./report.aux) ) 
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 128--131
+
+ []
+
+<epsilon.png, id=32, 462.528pt x 346.896pt>
+File: epsilon.png Graphic file (type png)
+<use epsilon.png>
+Package pdftex.def Info: epsilon.png  used on input line 136.
+(pdftex.def)             Requested size: 276.00105pt x 207.01175pt.
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 143--144
+
+ []
+
+
+Overfull \hbox (10.77843pt too wide) in paragraph at lines 159--160
+\OT1/cmr/m/n/10 In figura 5[] ^^Re pos-si-bile no-tare il rapido in-cre-mento d
+el pun-teg-gio ot-tenuto dall'agente
+ []
+
+<rewards.png, id=41, 462.528pt x 346.896pt>
+File: rewards.png Graphic file (type png)
+<use rewards.png>
+Package pdftex.def Info: rewards.png  used on input line 163.
+(pdftex.def)             Requested size: 276.00105pt x 207.01175pt.
+[6 <./epsilon.png>] [7 <./rewards.png>] (./report.bbl) [8] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 2630 strings out of 492623
- 34058 string characters out of 6135670
- 108137 words of memory out of 5000000
- 6500 multiletter control sequences out of 15000+600000
+ 2643 strings out of 492623
+ 34238 string characters out of 6135670
+ 108156 words of memory out of 5000000
+ 6512 multiletter control sequences out of 15000+600000
  9838 words of font info for 36 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,22n,25p,919b,347s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pf
-b></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmmi7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/s
-hare/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmsy5.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><
-/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on report.pdf (7 pages, 270338 bytes).
+ 41i,22n,25p,1041b,347s stack positions out of 5000i,500n,10000p,200000b,80000s
+</us
+r/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi1
+0.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/sha
+re/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr17.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
+r/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmtt10.pfb>
+Output written on report.pdf (9 pages, 345125 bytes).
 PDF statistics:
- 91 PDF objects out of 1000 (max. 8388607)
- 63 compressed objects within 1 object stream
+ 102 PDF objects out of 1000 (max. 8388607)
+ 68 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

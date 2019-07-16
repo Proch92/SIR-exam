@@ -7,7 +7,7 @@ import tensorflow as tf
 
 tf.enable_eager_execution()
 
-GYM = "LunarLander-v2"
+GYM = "CartPole-v1"
 
 
 def main():

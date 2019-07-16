@@ -10,7 +10,7 @@ import math
 
 tf.enable_eager_execution()
 
-GYM = "LunarLander-v2"
+GYM = "CartPole-v1"
 TARGET_RESET_FREQ = 20
 REPLAY_BUFFER_SIZE = 2000
 BATCH_SIZE = 50
@@ -58,6 +58,9 @@ def main():
     e_counter = 0
     epsilon_explore = E_START
     loss_value = 0
+    rewards_x_epoch = []
+    e_x_time = []
+    loss_x_time = []
 
     for epc in range(epochs):
         state = env.reset()
@@ -108,6 +111,9 @@ def main():
             if e_counter > E_RESET_FREQ:
                 e_counter = 0
 
+            e_x_time.append(epsilon_explore)
+            loss_x_time.append(float(loss_value))
+
             target_reset_count += 1
             if target_reset_count == TARGET_RESET_FREQ:
                 target_network.set_weights(ddqn.get_weights())
@@ -115,10 +121,25 @@ def main():
 
             if done:
                 break
+
+        rewards_x_epoch.append(tot_reward)
+
         if epc % 10 == 0:
                 print('[{:2.1f}%], e: {:5.4f} - loss: {:10.6f} - last episode reward: {}'.format((epc * 100) / epochs, epsilon_explore, float(loss_value), tot_reward))
 
     ddqn.save_weights(weights_path, save_format='h5')
+
+    with open('rewards.csv', 'w') as f:
+        for rew in rewards_x_epoch:
+            f.write("%s," % rew)
+
+    with open('epsilon.csv', 'w') as f:
+        for e in e_x_time:
+            f.write("%s," % e)
+
+    with open('loss.csv', 'w') as f:
+        for l in loss_x_time:
+            f.write("%s," % l)
 
     # let's try it
     obs = env.reset()

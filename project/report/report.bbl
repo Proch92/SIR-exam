@@ -10,6 +10,11 @@ Openai gym.
 \newblock \url{gym.openai.com}.
 \newblock Accessed: 2019-07-12.
 
+\bibitem{git}
+Project git page.
+\newblock \url{gitlab.com/proch92/sir/tree/master/project/rl/DDQN}.
+\newblock Accessed: 2019-07-16.
+
 \bibitem{nature_dqn}
 Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis
   Antonoglou, Daan Wierstra, and Martin Riedmiller.

@@ -106,6 +106,12 @@ INPUT /usr/share/texmf-dist/tex/latex/base/omscmr.fd
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/share/texmf-dist/fonts/tfm/public/cm/cmcsc10.tfm
+INPUT epsilon.png
+INPUT ./epsilon.png
+INPUT ./epsilon.png
+INPUT rewards.png
+INPUT ./rewards.png
+INPUT ./rewards.png
 INPUT report.bbl
 INPUT report.bbl
 INPUT report.aux

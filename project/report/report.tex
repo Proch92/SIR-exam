@@ -72,6 +72,7 @@
 	\subsection{Architettura del modello}
 		L'architettura usata per il progetto è simile alla rete illustrata nell'immagine \ref{fig:dueling_arch} ma con una rete a 3 strati \textit{fully connected} al posto di quella convoluzionale. \\
 
+		\begin{center}
 		\begin{tabular}{| c | c |}
 			\hline
 			\multicolumn{2}{|c|}{rete fully connected} \\
@@ -86,6 +87,7 @@
 			32 x 1 & 32 x \textit{actions} \\
 			\hline
 		\end{tabular}
+		\end{center}
 
 	\subsection{Algoritmo}
 		L'algoritmo si divide in una fase di inizializzazione e una fase di training. \\
@@ -101,21 +103,22 @@
 
 		\begin{pseudocode}{Dueling DDQN}{epochs}
 			\REPEAT
-				S \GETS env.GetState() \\
+				s \GETS env.GetState() \\
 				\REPEAT
-					$\IF random() < \epsilon$
-					$\THEN action \GETS RandomAction()$
-					$\ELSE action \GETS \arg \max(Q(S; \theta))$ \\
+					\IF random() <\ $\epsilon$
+					$\THEN a \GETS RandomAction()$
+					$\ELSE a \GETS \arg \max(Q(s; \theta))$ \\
 
-					$S^{\prime}, reward \GETS env.act(action)$ \\
-					$insert (S, action, S^{\prime}, reward)\ into\ ReplayBuffer$ \\
+					$s^{\prime}, r \GETS env.act(a)$ \\
+					$insert (s, a, s^{\prime}, r)\ into\ ReplayBuffer$ \\
 
-					$S_{b}, a_{b}, S_{b}^{\prime}, r_{b} \GETS ReplayBuffer.sample(BATCH\_SIZE)$ \\
-					$targetY \GETS r_{b} + \gamma Q\left(S_{b}^{\prime}, \arg \max _{a_{b}^{\prime}} Q\left(S_{b}^{\prime}, a_{b}^{\prime} ; \theta\right) ; \theta^{-}\right)$ \\
+					$s_{b}, a_{b}, s_{b}^{\prime}, r_{b} \GETS ReplayBuffer.sample(BATCH\_SIZE)$ \\
+					$targetY \GETS r_{b} + \gamma Q\left(s_{b}^{\prime}, \arg \max _{a_{b}^{\prime}} Q\left(s_{b}^{\prime}, a_{b}^{\prime} ; \theta\right) ; \theta^{-}\right)$ \\
 					$loss \GETS MeanSquaredError(targetY - Y_{b})$ \\
 					$ApplyGradients(loss, \theta)$ \\
 
-					$every \tau\ steps\ \theta^{-} \GETS \theta$
+					$every \tau\ steps\ \theta^{-} \GETS \theta$ \\
+					$update\ \epsilon$
 
 				\UNTIL $episode\_over$
 			\UNTIL epochs
@@ -124,7 +127,43 @@
 	\subsection{Tecnologie utilizzate e dettagli implementativi}
 		Tutto il progetto è stato sviluppato in python 3.7. \\
 		Per l'implementazione del modello è stato utilizzato tensorflow 2.0 per l'auto differenziazione del gradiente e keras per la definizione e il training della rete neuronale. \\
-		I dettagli implementativi più interessanti sono il \textit{submoduling} del modello keras per l'inserimento in maniera trasparente dell'ultimo livello che combina i flussi di value e advantage, e l'uso del \textit{gradient tape} per l'auto differenziazione di quest'ultimo.
+		I dettagli implementativi più interessanti sono il \textit{submoduling} del modello keras per l'inserimento in maniera trasparente dell'ultimo livello che combina i flussi di value e advantage, e l'uso del \textit{gradient tape} per l'auto differenziazione di quest'ultimo. \\
+
+		Per questo progetto ho deciso di utilizzare una variante del classico decadimento $\epsilon$-greddy dell'esplorazione resettando $\epsilon$ di nuovo al valore massimo ogni $\upsilon$ passi (per $\upsilon$ è stato usato un valore di 50000). Inoltre, il decadimento è di tipo esponenziale come si può vedere dalla figura \ref{fig:epsilon}. Questa variante dell'esplorazione $\epsilon$-greedy permette all'agente di alternare fasi di micro ottimizzazione a fasi di macro esplorazione. In particolare è stato osservato che anche con un solo reset del ciclo di esplorazione è stato possibile rompere un'abitudine "lazy" dell'agente per migliorare sensibilmente la sua performance; nel caso appena accennato l'agente aveva imparato ad "accontentarsi" di uno stato suboptimale che gli permetteva di raggiungere punteggi molto alti arrivando al limite della sua zona legale poco prima della fine degli episodi. Un reset di $\epsilon$ e poche epoche di training sono bastate a raggiungere un livello molto più alto.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.8\linewidth]{epsilon.png}
+			\caption{Decadimento esponenziale di $\epsilon$ con reset del ciclo}
+			\label{fig:epsilon}
+		\end{figure}
+
+	\section{Risultati}
+	\subsection{Parametri utilizzati}
+		Durante i test sono stati utilizzati i seguenti parametri \\
+
+		\begin{center}
+		\begin{tabular}{l | r}
+			Batch size & 50 \\
+			Future discount $\gamma$ & 0.99 \\
+			Replay buffer size & 2000 \\
+			$\epsilon$ start & 1 \\
+			$\epsilon$ minimum & 0.01 \\
+			$\epsilon$ decay & 1000 \\
+			$\epsilon$ reset frequency & 50000 \\
+			Azioni per episodio & 1000 \\
+		\end{tabular}
+		\end{center}
+
+	\subsection{Training e reward totali}
+		In figura \ref{fig:rewards} è possibile notare il rapido incremento del punteggio ottenuto dall'agente durante le prime fasi. Successivamente è possibile notare i picchi negativi successivi al reset dei cicli di $\epsilon$-esplorazione. Sul sito del progetto \cite{git} è possibile trovare dei video dell'agente addestrato alle prove con il task sotto la cartella \textit{video}.
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.8\linewidth]{rewards.png}
+			\caption{Andamento del reward totale guadagnato dall'agente in fase di training}
+			\label{fig:rewards}
+		\end{figure}
 
 	\newpage
 	\bibliography{mybib}{}
