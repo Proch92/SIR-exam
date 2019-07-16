@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex report"] 1563280441 "report.aux" "report.bbl" "report" 1563280594
+["bibtex report"] 1563280441 "report.aux" "report.bbl" "report" 1563284260
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1557554374 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
   "mybib.bib" 1563280081 1039 2f94c84d75c1930d54f0e4dfc51256c1 ""
-  "report.aux" 1563280593 3164 e656bf49c8d4a74946feba461fe910b1 "pdflatex"
+  "report.aux" 1563284259 3164 e656bf49c8d4a74946feba461fe910b1 "pdflatex"
   (generated)
   "report.blg"
   "report.bbl"
-["pdflatex"] 1563280593 "report.tex" "report.pdf" "report" 1563280594
+["pdflatex"] 1563284254 "report.tex" "report.pdf" "report" 1563284260
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1557554374 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1557554374 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1557554374 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -81,11 +81,11 @@
   "dqnalgo.png" 1563194798 51731 ffd5d7ddb9f0c575b3856f591941c53c ""
   "dueling_arch.png" 1563200768 34827 9248de7c3c37790c450187ee78400b32 ""
   "epsilon.png" 1563279389 15656 edda78e2720595afefd4e89135dbbc29 ""
-  "report.aux" 1563280593 3164 e656bf49c8d4a74946feba461fe910b1 "pdflatex"
+  "report.aux" 1563284259 3164 e656bf49c8d4a74946feba461fe910b1 "pdflatex"
   "report.bbl" 1563280441 912 a98f29e57d1dda7b55ef97875dfbfd3a "bibtex report"
-  "report.tex" 1563280592 10918 dc1abd9f226c1935e86103b32a978ab0 ""
-  "rewards.png" 1563277677 43494 02e5afa8257ddcfbd1e01a0d7fe5975a ""
+  "report.tex" 1563280944 10917 8b5ab73aa5e3ca0025271774c9ba792d ""
+  "rewards.png" 1563281841 33215 46340feb1a84ed51bfd72eaaa462d235 ""
   (generated)
+  "report.aux"
   "report.log"
   "report.pdf"
-  "report.aux"
