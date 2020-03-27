@@ -8,3 +8,11 @@ Human_Level_Control_through_Deep_Reinforcement_Learning/
 project/bool_nk_net/__pycache__/
 
 project/rl/DDQN/__pycache__/
+
+*.aux
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.bbl
